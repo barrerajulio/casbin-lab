@@ -32,7 +32,25 @@ export class PermissionModule {
         {
           provide: 'PERMISSION_ENFORCER',
           useFactory: (adapter: TypeORMAdapter) =>
-            newEnforcer('./model.conf', adapter),
+            newEnforcer(
+              `
+[request_definition]
+r = sub, tenant, obj, act, eft
+
+[policy_definition]
+p = sub, tenant, obj, act, eft
+
+[role_definition]
+g = _, _, _
+
+[policy_effect]
+e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+[matchers]
+m = g(r.sub, p.sub, r.tenant) && keyMatch2(r.obj, p.obj) && r.act == p.act && r.tenant == p.tenant
+`,
+              adapter,
+            ),
           inject: ['PERMISSION_ADAPTER'],
         },
       ],
