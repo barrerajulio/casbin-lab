@@ -59,6 +59,13 @@ export class PostController {
     const context = new EnforceContext('r2', 'p2', 'e', 'm2');
     const enforces: any[][] = [
       [userId, tenantId, `/posts/${postId}`, 'GET', 'allow'],
+      [
+        context,
+        '5336ed05-cb56-4738-a2c3-aa8ce73a500b',
+        `/posts/${postId}`,
+        'GET',
+        'allow',
+      ],
     ];
     /*
     if (hasPolicyDenied) {

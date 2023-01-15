@@ -36,18 +36,22 @@ export class PermissionModule {
               `
 [request_definition]
 r = sub, tenant, obj, act, eft
+r2 = sub, obj, act, eft
 
 [policy_definition]
 p = sub, tenant, obj, act, eft
+p2 = sub, obj, act, eft
 
 [role_definition]
 g = _, _, _
+g2 = _, _
 
 [policy_effect]
 e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
 
 [matchers]
 m = g(r.sub, p.sub, r.tenant) && keyMatch2(r.obj, p.obj) && r.act == p.act && r.tenant == p.tenant
+m2 = g2(r2.sub, p2.sub) && keyMatch2(r2.obj, p2.obj) && r2.act == p2.act
 `,
               adapter,
             ),
