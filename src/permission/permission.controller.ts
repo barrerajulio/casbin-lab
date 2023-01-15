@@ -19,17 +19,39 @@ export class PermissionController {
   @Post()
   @HttpCode(HttpStatus.NO_CONTENT)
   async addPermission(
-    @Body() { action, resourceId }: PermissionDto,
+    @Body() { action, resourceId, effect }: PermissionDto,
   ): Promise<void> {
-    const policy = await this.enforcer.addPolicy(
+    console.log(
+      '🚀 ~ file: permission.controller.ts ~ line 30 ~ PermissionController ~ action',
+      action,
+    );
+    const hasNamedPolicy = await this.enforcer.hasNamedPolicy(
+      'p2',
       '01c1304e-1eef-42c8-bbd3-d3ed2c5b90f6',
       resourceId,
       action,
+      effect === 'allow' ? 'deny' : 'allow',
+    );
+    if (hasNamedPolicy) {
+      await this.enforcer.removeNamedPolicy(
+        'p2',
+        '01c1304e-1eef-42c8-bbd3-d3ed2c5b90f6',
+        resourceId,
+        action,
+        effect === 'allow' ? 'deny' : 'allow',
+      );
+    }
+    const policy = await this.enforcer.addNamedPolicy(
+      'p2',
+      '01c1304e-1eef-42c8-bbd3-d3ed2c5b90f6',
+      resourceId,
+      action,
+      effect,
     );
     console.log(
       '🚀 ~ file: permission.controller.ts ~ line 30 ~ PermissionController ~ policy',
       policy,
     );
-    await this.enforcer.savePolicy();
+    // await this.enforcer.savePolicy();
   }
 }
